@@ -1,0 +1,6 @@
+{
+  "name": "aksa-html-canvas",
+  "version": "0.2.0",
+  "description": "Aksa HTML preview canvas MCP integration.",
+  "mcpServers": "./.mcp.json"
+}

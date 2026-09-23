@@ -1,0 +1,13 @@
+{
+  "id": "eeefb6b3-31ef-41f0-ae99-3562ffd73515",
+  "agent": "claude",
+  "states": [
+    "filled"
+  ],
+  "prompt": "Redesign the Login screen from docs/design.md. Generate self-contained HTML for each requested state independently: idle, filled, positive, negative. Keep the same visual system and geometry across states while changing only the state-specific content and feedback. Target the selected iPhone CSS viewport exactly, use viewport-fit=cover and env(safe-area-inset-*) for real safe-area behavior, and do not draw fake device chrome inside the HTML. Publish each state independently with publish_frame_html. Do not touch React or infrastructure.",
+  "device": "iPhone 17 Pro — 402 × 873 CSS px — 3×",
+  "status": "failed",
+  "createdAt": "2026-09-23T13:15:10.425Z",
+  "message": "No agent command configured. Set AKSA_AGENT_COMMANDS_JSON to explicit argv arrays for claude, codex, and/or antigravity.",
+  "finishedAt": "2026-09-23T13:15:10.427Z"
+}

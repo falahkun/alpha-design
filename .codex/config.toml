@@ -1,0 +1,3 @@
+[mcp_servers.aksa_html_canvas]
+command = "npx"
+args = ["tsx", "./mcp/server.ts"]

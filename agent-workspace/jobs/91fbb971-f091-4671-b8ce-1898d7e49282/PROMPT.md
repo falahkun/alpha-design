@@ -1,0 +1,4 @@
+Redesign the Login screen from docs/design.md. Generate self-contained HTML for each requested state independently: idle, filled, positive, negative. Keep the same visual system and geometry across states while changing only the state-specific content and feedback. Target the selected iPhone CSS viewport exactly, use viewport-fit=cover and env(safe-area-inset-*) for real safe-area behavior, and do not draw fake device chrome inside the HTML. Publish each state independently with publish_frame_html. Do not touch React or infrastructure.
+
+## Device contract
+Target CSS viewport: iPhone 17 Pro — 402 × 873 CSS px — 3×. Use viewport-fit=cover and env(safe-area-inset-*) where appropriate. Do not draw device chrome inside the HTML.
