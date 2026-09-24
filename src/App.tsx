@@ -38,7 +38,8 @@ export default function App(){
   const generateChosen=()=>chosen.forEach((state,i)=>setTimeout(()=>generate(state),i*120));
 
   const onCanvasPointerDown=(e:React.PointerEvent)=>{
-    if(e.target!==e.currentTarget) return;
+    if(e.button!==0) return;
+    if((e.target as HTMLElement).closest('.frame-node, .system-card, .floating, .canvas-toolbar, .topbar, .statusbar, .bottom-prompt')) return;
     panRef.current={x:e.clientX,y:e.clientY,px:pan.x,py:pan.y};
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
@@ -50,8 +51,21 @@ export default function App(){
   const onCanvasPointerUp=()=>{panRef.current=null};
   const onWheel=(e:React.WheelEvent)=>{
     e.preventDefault();
-    const next=Math.max(.45,Math.min(1.15,zoom-(e.deltaY>0?.05:-.05)));
-    setZoom(next);
+    const surfaceEl=surface.current;
+    if(!surfaceEl) return;
+    const rect=surfaceEl.getBoundingClientRect();
+    const mouseX=e.clientX-rect.left;
+    const mouseY=e.clientY-rect.top;
+
+    const zoomFactor = Math.min(1.25, Math.max(0.8, Math.exp(-e.deltaY * 0.0015)));
+    const nextZoom = Math.max(0.3, Math.min(2.0, Number((zoom * zoomFactor).toFixed(3))));
+    if (Math.abs(nextZoom - zoom) < 0.001) return;
+
+    const newPanX = mouseX - (mouseX - pan.x) * (nextZoom / zoom);
+    const newPanY = mouseY - (mouseY - pan.y) * (nextZoom / zoom);
+
+    setZoom(nextZoom);
+    setPan({ x: Math.round(newPanX), y: Math.round(newPanY) });
   };
 
   return <main className="app">
@@ -67,7 +81,7 @@ export default function App(){
 
     <div className="canvas" ref={surface} onPointerDown={onCanvasPointerDown} onPointerMove={onCanvasPointerMove} onPointerUp={onCanvasPointerUp} onPointerCancel={onCanvasPointerUp} onWheel={onWheel}>
       <div className="grid-plane" style={{backgroundSize:`${24*zoom}px ${24*zoom}px`,backgroundPosition:`${pan.x}px ${pan.y}px`}}/>
-      <div className="canvas-stage" style={{transform:`translate(${pan.x}px,${pan.y}px)`}}>
+      <div className="canvas-stage" style={{transform:`translate(${pan.x}px,${pan.y}px) scale(${zoom})`,transformOrigin:'0 0'}}>
         <div className="system-card">
           <div className="system-title">Aksa Digital HR System</div>
           <div className="system-swatch primary-swatch">Primary <b>#0B6BFF</b></div><div className="system-swatch green-swatch">Secondary <b>#079455</b></div><div className="system-swatch orange-swatch">Tertiary <b>#F79309</b></div>
@@ -76,8 +90,8 @@ export default function App(){
         {states.map(state=><FrameCanvas key={state} frame={frames.find(f=>f.state===state)} job={jobByState[state]} onGenerate={()=>generate(state)}/>)}
       </div>
 
-      <div className="canvas-toolbar left-toolbar"><button title="Zoom out" onClick={()=>setZoom(Math.max(.45,zoom-.1))}>−</button><button title="Zoom in" onClick={()=>setZoom(Math.min(1.15,zoom+.1))}>＋</button><button title="Fit" onClick={()=>{setZoom(.72);setPan({x:60,y:35})}}>⌂</button></div>
-      <div className="canvas-toolbar bottom-toolbar"><span>{Math.round(zoom*100)}%</span><button onClick={()=>setZoom(Math.max(.45,zoom-.05))}>−</button><button onClick={()=>setZoom(Math.min(1.15,zoom+.05))}>＋</button></div>
+      <div className="canvas-toolbar left-toolbar"><button title="Zoom out" onClick={()=>setZoom(Math.max(.3,Number((zoom-.1).toFixed(2))))}>−</button><button title="Zoom in" onClick={()=>setZoom(Math.min(2.0,Number((zoom+.1).toFixed(2))))}>＋</button><button title="Fit" onClick={()=>{setZoom(.72);setPan({x:80,y:30})}}>⌂</button></div>
+      <div className="canvas-toolbar bottom-toolbar"><span>{Math.round(zoom*100)}%</span><button onClick={()=>setZoom(Math.max(.3,Number((zoom-.05).toFixed(2))))}>−</button><button onClick={()=>setZoom(Math.min(2.0,Number((zoom+.05).toFixed(2))))}>＋</button></div>
 
       {composerOpen&&<section className="floating composer-float">
         <div className="float-head"><div><strong>Prompt Composer</strong><small>Generate each frame independently</small></div><button onClick={()=>setComposerOpen(false)}>×</button></div>

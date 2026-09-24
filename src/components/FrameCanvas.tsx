@@ -29,10 +29,11 @@ export default function FrameCanvas({frame,job,onGenerate}:{frame?:Frame;job?:Jo
   };
   const onPointerUp=()=>{dragging.current=null};
 
-  return <div className={`frame-node ${selected===state?'selected':''}`} style={{left:position.x,top:position.y,width:device.width*zoom+2}} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}>
+  return <div className={`frame-node ${selected===state?'selected':''}`} style={{left:position.x,top:position.y,width:device.width+2}} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}>
     <div className="frame-node-label"><span><b>{labels[state]}</b><small>{device.width} × {device.height}</small></span><span className={`frame-status ${statusLabel(job)}`}>{statusLabel(job)}</span></div>
-    <div className="artboard" style={{width:device.width*zoom,height:device.height*zoom}}>
-      {frame?.html ? <iframe title={frame.title} sandbox="allow-scripts" srcDoc={frame.html} style={{width:device.width,height:device.height,transform:`scale(${zoom})`}}/> : <div className="frame-placeholder"><div className="spinner"/><strong>{job?.status==='running'?'Generating…':'Not generated'}</strong><span>{job?.message ?? 'Generate this frame independently.'}</span><button onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onGenerate()}}>Generate {labels[state]}</button></div>}
+    <div className="artboard" style={{width:device.width,height:device.height}}>
+      {frame?.html ? <iframe title={frame.title} sandbox="allow-scripts" scrolling="no" srcDoc={frame.html} style={{width:device.width,height:device.height}}/> : <div className="frame-placeholder"><div className="spinner"/><strong>{job?.status==='running'?'Generating…':'Not generated'}</strong><span>{job?.message ?? 'Generate this frame independently.'}</span><button onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onGenerate()}}>Generate {labels[state]}</button></div>}
+      <div className="artboard-shield" />
     </div>
     <div className="frame-node-footer"><span>Login — {labels[state]}</span><button onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onGenerate()}}>{job?.status==='running'?'Running…':'Generate'}</button></div>
   </div>;
